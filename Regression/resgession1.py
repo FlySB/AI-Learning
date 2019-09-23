@@ -15,7 +15,6 @@ def regression1():
     ax.scatter(xMat[:, 1].flatten().tolist(), yMat.T[:, 0].flatten().tolist())  # scatter 的x是xMat中的第二列，y是yMat的第一列
     xCopy = xMat.copy()
     xCopy.sort(0)   #numpy里的sort函数：'0'按列排 '1'按行排
-    print(xCopy)
     yHat = xCopy * ws
     ax.plot(xCopy[:, 1], yHat)
     plt.show()

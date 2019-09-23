@@ -6,7 +6,7 @@ def lwlr(testPoint, xArr, yArr, k = 1.0):
     yMat = mat(yArr).T
 
     m = shape(xMat)[0] # xMat矩阵的行数
-    weights = mat(eye((m)))
+    weights = mat(eye((m))) # 返回SIZE为m的单位矩阵
 
     for j in range(m):
 
