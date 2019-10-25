@@ -1,2 +1,2 @@
-from regression2 import regression2
-regression2()
+from resgession1 import regression1
+regression1()
