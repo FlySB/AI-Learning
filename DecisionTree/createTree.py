@@ -31,5 +31,4 @@ def createTree(dataSet, labels):
         subLabels = labels[:]
         # 遍历当前选择特征包含的所有属性值，在每个数据集划分上递归调用函数createTree()
         myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels)
-        # print 'myTree', value, myTree
     return myTree
