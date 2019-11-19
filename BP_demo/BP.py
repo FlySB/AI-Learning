@@ -13,7 +13,7 @@ def tan_deriv(x):
 
 # sigmoid函数
 def logistic(x):
-  return 1 / (1 + np.exp(-x))
+  return 1.0 / (1.0 + np.exp(-1.0*x))
 
 
 # sigmoid函数的导数
