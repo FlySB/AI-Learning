@@ -18,7 +18,7 @@ def logistic(x):
 
 # sigmoid函数的导数
 def logistic_derivative(x):
-  return logistic(x) * (1 - logistic(x))
+  return logistic(x) * (1.0 - logistic(x))
 
 
 class NeuralNetwork:
@@ -67,14 +67,16 @@ class NeuralNetwork:
       a = [X[i]]
       # 正向更新
       for l in range(len(self.weights)):
-        a.append(self.activation(np.dot(a[l], self.weights[l])))
+        a.append(self.activation(np.dot(a[l], self.weights[l]))) # np.dot
+      print("aaaa")
+      print(a)
       error = y[i] - a[-1]
       deltas = [error * self.activation_deriv(a[-1])]
 
       # 反向更新
       for l in range(len(a) - 2, 0, -1):
         deltas.append(deltas[-1].dot(self.weights[l].T) * self.activation_deriv(a[l]))
-        deltas.reverse()
+        deltas.reverse() #矩阵反向
       for i in range(len(self.weights)):
         layer = np.atleast_2d(a[i])
         delta = np.atleast_2d(deltas[i])
