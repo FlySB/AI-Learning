@@ -46,6 +46,23 @@ class BP:
                 self.v += learning_rate*np.dot(X[i].reshape((self.InVecter,1)), e.reshape((1, self.HideNode)))
                 self.gamma -= learning_rate*e
 
+    def accFit(self, X, Y, learning_rate,epochs):
+        m ,n = np.shape(X)
+        Y = Y.reshape(m, self.OutVecter)
+        for k in range(epochs):
+            alpha = np.dot(X, self.v)
+            b = logistic(alpha - self.gamma, 2)
+            beta = np.dot(b, self.w)
+            predictY = logistic(beta - self.theta, 2)
+
+            g = predictY*(1 - predictY)*(Y - predictY)
+            e = b * (1-b) * ((np.dot(self.w, g.T)).T)
+            self.w += learning_rate * np.dot(b.T, g)
+            self.theta -= learning_rate * sum(g)
+            self.v += learning_rate * np.dot(X.T, e)
+            self.gamma -= learning_rate * sum(e)
+
+
     def predict(self, TestX):
         alpha = np.dot(TestX, self.v)
         b = logistic(alpha - self.gamma, 2)
