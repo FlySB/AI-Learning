@@ -221,5 +221,7 @@ def clusterClubs(fileName, imgName, centroids,numClust=5):
         # 使用十字标记来表示簇中心并在图中显示
         ax1.scatter(ptsInCurrCluster[:, 0].flatten().A[0], ptsInCurrCluster[:, 1].flatten().A[0], marker=markerStyle,
                     s=90)
-    ax1.scatter(myCentroids[:, 0].flatten().A[0], myCentroids[:, 1].flatten().A[0], marker='+', s=300)
+    ax1.scatter(myCentroids[:, 0].flatten().A[0], myCentroids[:, 1].flatten().A[0], marker='.', s=300)
+    plt.xlim(0,20)
+    plt.ylim(-1,4)
     plt.show()
