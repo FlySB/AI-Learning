@@ -3,8 +3,8 @@ from test import kMeans
 from test import biKmeans
 from test import clusterClubs
 import numpy as np
-s = "C:\\Users\\龚兴SUNNYMAN\\Desktop\\hw.txt"
-imame = "C:\\Users\\龚兴SUNNYMAN\\Desktop\\xxx.png"
+s = "/Users/gong/Desktop/MyPythonCode/AI-Learning/Kmeans/hw.txt"
+imame = "/Users/gong/Desktop/MyPythonCode/AI-Learning/Kmeans/xxx.png"
 
 x = loadDataSet(s)
 x = np.array(x)
