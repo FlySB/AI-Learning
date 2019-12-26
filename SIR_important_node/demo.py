@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from collections import Counter
 
 # def CreateDataset(file_path):
 #     Zreo = 0
@@ -59,6 +60,18 @@ def SIRSpread(mat, beta, mu, vec):
                 nvec[i] = 2
     return nvec
 
+def Find_I(vec):
+    for i in vec:
+        if i == 1:
+            return True
+    return False
+
+def Find_R(vec):
+    sumR = 0
+    for i in vec:
+        if i == 2:
+            sumR += 1
+    return sumR
 
 def DegreeCount(mat, i):
     num = 0
@@ -66,13 +79,6 @@ def DegreeCount(mat, i):
         if mat[i][j] == 1:
             num = num + 1
     return num
-
-def DegreeRank(mat):
-    degree = {}
-    for i in range(len(mat)):
-        num = DegreeCount(mat,i)
-        degree[i] =num
-    return degree
 
 def NbCount(mat):
     Nb = {}
@@ -102,14 +108,15 @@ def NbCount(mat):
 #         CL[i] = num
 #     return CL
 
-def LocalRank(mat,DegreeCount):
-    NbCount = {}
+def DegreeRank(mat):
+    degree = {}
     for i in range(len(mat)):
-        list = []
-        for j in range(len(mat)):
-            if mat[i][j] == 1:
-                list.append(j)
-        NbCount[i] = list
+        num = DegreeCount(mat,i)
+        degree[i] =num
+    return degree
+
+
+def LocalRank(NbCount,DegreeCount):
 
     Qcount = {}
     for i in range(len(NbCount)):
@@ -157,21 +164,119 @@ def K_shell(ks):
         ks1.clear()
     return kshell
 
+# H-index指数
+def Hindex(indexList):
+    indexSet = sorted(set(indexList), reverse=True)
+    sign = 0
+    for index in indexSet:
+        # clist为大于等于指定引用次数index的文章列表
+        clist = [i for i in indexList if i >= index]
+        # 由于引用次数index逆序排列，当index<=文章数量len(clist)时，得到H指数
+        if index <= len(clist):
+            sign = 1
+            break
+    if sign == 0: index = len(indexList)
+    return index
+
+# # 更适合稠密图
+# def Hindex(indexList):
+#     sign = 0
+#     HCounter = Counter(indexList)
+#     ReversedCounter = sorted(HCounter.items(), reverse=True)
+#     CounterKeys = [i[0] for i in ReversedCounter]
+#     CounterValues = [i[1] for i in ReversedCounter]
+#     for index in range(0, len(CounterValues)):
+#         # sum(CounterValues[0:index+1])为大于等于某个索引值——CounterKeys[index]的所有的文章总和
+#         if CounterKeys[index] <= sum(CounterValues[0:index + 1]):
+#             hinex = CounterKeys[index]
+#             sign = 1
+#             break
+#     if sign == 0: hinex = len(indexList)
+#     return hinex
+
+def n_Hindex(Nbcount,degree, n):
+    for i in range(1, n+1):
+        h_NB = {}
+        for k, v in Nbcount.items():
+            list = []
+            for i in v:
+                list.append(degree[i])
+            h_NB[k] = list
+        # print("Nbcount")
+        # print(Nbcount)
+        # print("degree")
+        # print(degree[975])
+        # print(degree)
+        # print("h_NB")
+        # print(h_NB)
+        h = {}
+        for k, v in h_NB.items():
+            h[k] = Hindex(v)
+        # k1, k2 , k3~~~更新一遍
+        degree = h
+
+    return h
+
+def Out(TheDist):
+    TheMax = 0
+    for k,v in TheDist.items():
+        if v > TheMax: TheMax = v
+    print(TheMax)
+    List = []
+    for k,v in TheDist.items():
+        if v == TheMax: List.append(k)
+    return List
 
 
-
-m = CreateDataset("/Users/gong/Desktop/text.txt")
-# for i in range(len(m)):
-#     for j in range(len(m)):
-#         if m[i][j] == 1:
-#             print(str(i)+"\t"+str(j))
-degree = DegreeRank(m)
-print(degree)
+m = CreateDataset("/Users/gong/Desktop/powernet.txt")
 
 Nb = NbCount(m)
-print(Nb)
-ks = K_shell(Nb)
-print(ks)
 
-lR = LocalRank(m, degree)
-print(lR)
+degree = DegreeRank(m)
+print(degree)
+print(Out(degree))
+
+v = np.zeros((1,len(degree)))
+v[0][2553]=1
+v = np.array(v[0])
+print(v)
+print(v[2553])
+
+while Find_I(v):
+    v = SIRSpread(m, 0.6, 0.8, v)
+
+print(v)
+print(Find_I(v))
+
+print(Find_R(v))
+
+# lR = LocalRank(Nb, degree)
+# print(lR)
+# print(Out(lR))
+# #
+# # # K_shell使用后参数会变为空
+#
+#
+#
+x = n_Hindex(Nb,degree,100)
+print(x)
+print(Out(x))
+
+v = np.zeros((1,len(degree)))
+v[0][4332]=1
+v = np.array(v[0])
+print(v)
+print(v[4332])
+
+while Find_I(v):
+    v = SIRSpread(m, 0.6, 0.8, v)
+
+print(v)
+print(Find_I(v))
+
+print(Find_R(v))
+
+#
+#
+# ks = K_shell(Nb)
+# print(ks[len(ks)])

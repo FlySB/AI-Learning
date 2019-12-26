@@ -2,13 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6a6cb2e-8edf-4592-b5ba-9329885e579b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../PCA/.idea/PCA.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../PCA/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../PCA/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../PCA/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../PCA/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kmeans/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kmeans/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SIR.py" beforeDir="false" afterPath="$PROJECT_DIR$/SIR.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/demo.py" afterDir="false" />
     </list>
@@ -23,11 +16,22 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/demo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="70" column="15" lean-forward="true" selection-start-line="70" selection-start-column="15" selection-end-line="70" selection-end-column="15" />
+            <state relative-caret-position="-1336">
+              <caret line="50" selection-start-line="50" selection-end-line="50" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <element signature="e#34#65#0" />
+                <element signature="e#1886#1991#0" />
+                <element signature="e#2157#2343#0" />
+                <element signature="e#2344#2345#0" />
+                <element signature="e#2651#2766#0" />
+                <element signature="e#2804#3309#0" />
+                <element signature="e#3332#4082#0" />
+                <element signature="e#3961#4323#0" />
+                <element signature="e#4325#4335#0" />
+                <element signature="e#4967#5415#0" />
+                <element signature="e#5178#5196#0" />
+                <element signature="e#5505#5682#0" />
               </folding>
             </state>
           </provider>
@@ -36,8 +40,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SIR.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="295">
-              <caret line="41" column="21" selection-start-line="41" selection-start-column="21" selection-end-line="41" selection-end-column="21" />
+            <state relative-caret-position="434">
+              <caret line="32" column="17" selection-start-line="32" selection-start-column="17" selection-end-line="32" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -45,7 +49,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SIRSpread.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="-694">
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -86,6 +90,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -97,7 +102,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -116,7 +120,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.SIR">
+  <component name="RunManager" selected="Python.demo">
     <configuration name="SIR" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SIR_important_node" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -182,8 +186,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.SIR" />
         <item itemvalue="Python.demo" />
+        <item itemvalue="Python.SIR" />
         <item itemvalue="Python.SIRSpread" />
       </list>
     </recent_temporary>
@@ -205,12 +209,12 @@
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16208598" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16208598" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.2614458" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2614458" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -259,7 +263,7 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/SIRSpread.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="-694">
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -268,18 +272,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SIR.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="41" column="21" selection-start-line="41" selection-start-column="21" selection-end-line="41" selection-end-column="21" />
+        <state relative-caret-position="434">
+          <caret line="32" column="17" selection-start-line="32" selection-start-column="17" selection-end-line="32" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/demo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="70" column="15" lean-forward="true" selection-start-line="70" selection-start-column="15" selection-end-line="70" selection-end-column="15" />
+        <state relative-caret-position="-1336">
+          <caret line="50" selection-start-line="50" selection-end-line="50" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <element signature="e#34#65#0" />
+            <element signature="e#1886#1991#0" />
+            <element signature="e#2157#2343#0" />
+            <element signature="e#2344#2345#0" />
+            <element signature="e#2651#2766#0" />
+            <element signature="e#2804#3309#0" />
+            <element signature="e#3332#4082#0" />
+            <element signature="e#3961#4323#0" />
+            <element signature="e#4325#4335#0" />
+            <element signature="e#4967#5415#0" />
+            <element signature="e#5178#5196#0" />
+            <element signature="e#5505#5682#0" />
           </folding>
         </state>
       </provider>
