@@ -42,44 +42,6 @@ def CreateDataset(file_path):
         Mat[int(Arr[1])][int(Arr[0])] = 1
     return Mat
 
-def SIRSpread(mat, beta, mu, vec):
-    nvec = np.array(vec)
-    for i in range(vec.size):
-        if vec[i] == 0:
-            num = 0
-            for j in range(vec.size):
-                if mat[i, j] == 1 and vec[j] == 1:
-                    num = num + 1
-            prob = 1 - (1 - beta) ** num
-            rand = random.random()
-            if rand < prob:
-                nvec[i] = 1
-        elif vec[i] == 1:
-            rand = random.random()
-            if rand < mu:
-                nvec[i] = 2
-    return nvec
-
-def Find_I(vec):
-    for i in vec:
-        if i == 1:
-            return True
-    return False
-
-def Find_R(vec):
-    sumR = 0
-    for i in vec:
-        if i == 2:
-            sumR += 1
-    return sumR
-
-def DegreeCount(mat, i):
-    num = 0
-    for j in range(len(mat)):
-        if mat[i][j] == 1:
-            num = num + 1
-    return num
-
 def NbCount(mat):
     Nb = {}
     for i in range(len(mat)):
@@ -89,6 +51,70 @@ def NbCount(mat):
                 list.append(j)
         Nb[i] = list
     return Nb
+
+# 单次迭代
+def SIRSpread(mat, beta, mu, vec):
+    """S:0 I:1 R:2"""
+    for i in range(vec.size):
+        if vec[i] == 0:
+            num = 0
+            for j in range(vec.size):
+                if mat[i, j] == 1 and vec[j] == 1:
+                    num = num + 1
+            prob = 1 - (1 - beta) ** num
+            rand = random.random()
+            if rand < prob:
+                vec[i] = 1
+        elif vec[i] == 1:
+            rand = random.random()
+            if rand < mu:
+                vec[i] = 2
+    return vec
+
+# 判断网络中是否还有I点
+def Find_I(vec):
+    for i in vec:
+        if i == 1:
+            return True
+    return False
+
+# 计算图中R点
+def Sum_R(vec):
+    sumR = 0
+    for i in vec:
+        if i == 2:
+            sumR += 1
+    return sumR
+
+# n次迭代求平均
+def n_SIR(mat, beta, mu, v, n):
+    sum = 0
+    for i in range(n):
+        vec = np.zeros((1, mat.shape[0]))
+        vec = np.array(vec[0])
+        vec[v] = 1
+        while Find_I(vec):
+            SIRSpread(mat, beta, mu, vec)
+        sum += Sum_R(vec)/len(vec)
+    return sum/n
+
+def DegreeCount(mat, i):
+    """mat: 邻接矩阵"""
+    num = 0
+    for j in range(len(mat)):
+        if mat[i][j] == 1:
+            num = num + 1
+    return num
+
+def DegreeRank(mat):
+    """mat: 邻接矩阵"""
+    degree = {}
+    for i in range(len(mat)):
+        num = DegreeCount(mat,i)
+        degree[i] =num
+    return degree
+
+
 #
 # def QCount(DegreeCount, NbCount):
 #     Q = {}
@@ -108,16 +134,15 @@ def NbCount(mat):
 #         CL[i] = num
 #     return CL
 
-def DegreeRank(mat):
-    degree = {}
-    for i in range(len(mat)):
-        num = DegreeCount(mat,i)
-        degree[i] =num
-    return degree
+
 
 
 def LocalRank(NbCount,DegreeCount):
-
+    """
+    :param NbCount: 网络邻接表
+    :param DegreeCount: 节点度表
+    :return: LocalRank
+    """
     Qcount = {}
     for i in range(len(NbCount)):
         num = 0
@@ -133,7 +158,12 @@ def LocalRank(NbCount,DegreeCount):
         CL[i] = num
     return CL
 
+
 def K_shell(ks):
+    """
+    :param ks: 网络邻接表
+    :return: K-shell索引
+    """
     kshell = {}
     ks1 = []
     # k值的初始值为s=1
@@ -160,18 +190,20 @@ def K_shell(ks):
             s += 1
             kshell[s] = []
         # 每一次进行完上面的代码都要进行一次清空 ，为下次判断是否为None做好条件
-
         ks1.clear()
     return kshell
 
 # H-index指数
+# 更适合于稀疏图
 def Hindex(indexList):
+    """
+    :param indexList: (k1,k2,k3......kn)
+    :return: H指数
+    """
     indexSet = sorted(set(indexList), reverse=True)
     sign = 0
     for index in indexSet:
-        # clist为大于等于指定引用次数index的文章列表
         clist = [i for i in indexList if i >= index]
-        # 由于引用次数index逆序排列，当index<=文章数量len(clist)时，得到H指数
         if index <= len(clist):
             sign = 1
             break
@@ -186,7 +218,7 @@ def Hindex(indexList):
 #     CounterKeys = [i[0] for i in ReversedCounter]
 #     CounterValues = [i[1] for i in ReversedCounter]
 #     for index in range(0, len(CounterValues)):
-#         # sum(CounterValues[0:index+1])为大于等于某个索引值——CounterKeys[index]的所有的文章总和
+#         # sum(CounterValues[0:index+1])
 #         if CounterKeys[index] <= sum(CounterValues[0:index + 1]):
 #             hinex = CounterKeys[index]
 #             sign = 1
@@ -194,7 +226,14 @@ def Hindex(indexList):
 #     if sign == 0: hinex = len(indexList)
 #     return hinex
 
+# n趋近无穷大，H-index值不在变化
 def n_Hindex(Nbcount,degree, n):
+    """
+    :param Nbcount: 网络邻接表
+    :param degree: 节点度数表
+    :param n: 迭代次数
+    :return: H-index表
+    """
     for i in range(1, n+1):
         h_NB = {}
         for k, v in Nbcount.items():
@@ -202,13 +241,6 @@ def n_Hindex(Nbcount,degree, n):
             for i in v:
                 list.append(degree[i])
             h_NB[k] = list
-        # print("Nbcount")
-        # print(Nbcount)
-        # print("degree")
-        # print(degree[975])
-        # print(degree)
-        # print("h_NB")
-        # print(h_NB)
         h = {}
         for k, v in h_NB.items():
             h[k] = Hindex(v)
@@ -221,62 +253,71 @@ def Out(TheDist):
     TheMax = 0
     for k,v in TheDist.items():
         if v > TheMax: TheMax = v
-    print(TheMax)
+    # print(TheMax)
     List = []
     for k,v in TheDist.items():
         if v == TheMax: List.append(k)
     return List
 
 
-m = CreateDataset("/Users/gong/Desktop/powernet.txt")
+
+def List_SIR(mat, beta, mu, vec_list, n):
+    sum = 0
+    for v in vec_list:
+        sum += n_SIR(mat,beta,mu,v,n)
+    return sum/len(vec_list)
+
+
+
+
+m = CreateDataset("bigdata/USAir97.txt")
+
 
 Nb = NbCount(m)
-
+#
 degree = DegreeRank(m)
 print(degree)
-print(Out(degree))
-
-v = np.zeros((1,len(degree)))
-v[0][2553]=1
-v = np.array(v[0])
-print(v)
-print(v[2553])
-
-while Find_I(v):
-    v = SIRSpread(m, 0.6, 0.8, v)
-
-print(v)
-print(Find_I(v))
-
-print(Find_R(v))
+# dr = Out(degree)
+# print(dr)
+# print(List_SIR(m,0.6,0.8,dr,100))
+# print(n_SIR(m,0.6,0.8,12,10))
+#
+# v = np.zeros((1,len(degree)))
+# v[0][6]=1
+# v = np.array(v[0])
+# print(v)
+# print(v[6])
+#
+# while Find_I(v):
+#     SIRSpread(m, 0.6, 0.8, v)
+#
+# print(v)
+# print(Find_I(v))
+#
+# print(Find_R(v))
 
 # lR = LocalRank(Nb, degree)
 # print(lR)
-# print(Out(lR))
+# L_R = Out(lR)
+# print(L_R)
+# print(List_SIR(m,0.6,0.8,L_R,100))
 # #
 # # # K_shell使用后参数会变为空
 #
 #
 #
-x = n_Hindex(Nb,degree,100)
-print(x)
-print(Out(x))
+# x = n_Hindex(Nb,degree,100)
+# print(x)
+# h_i = Out(x)
+# print(h_i)
+# print(List_SIR(m,0.6,0.8,h_i,100))
 
-v = np.zeros((1,len(degree)))
-v[0][4332]=1
-v = np.array(v[0])
-print(v)
-print(v[4332])
-
-while Find_I(v):
-    v = SIRSpread(m, 0.6, 0.8, v)
-
-print(v)
-print(Find_I(v))
-
-print(Find_R(v))
 
 #
 #
 # ks = K_shell(Nb)
-# print(ks[len(ks)])
+# print(ks)
+# k_s = ks[len(ks)]
+# print(k_s)
+# print(List_SIR(m,0.6,0.8,k_s,100))
+
