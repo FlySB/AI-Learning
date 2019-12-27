@@ -95,8 +95,16 @@ def n_SIR(mat, beta, mu, v, n):
         vec[v] = 1
         while Find_I(vec):
             SIRSpread(mat, beta, mu, vec)
-        sum += Sum_R(vec)/len(vec)
+        sum += Sum_R(vec) #/len(vec)
     return sum/n
+
+def score_SIR(mat, beta, mu, n):
+    lenth = mat.shape[0]
+    score = {}
+    for i in range(lenth):
+        score[i] = n_SIR(mat, beta, mu, i, n)
+    return score
+
 
 def DegreeCount(mat, i):
     """mat: 邻接矩阵"""
@@ -267,10 +275,43 @@ def List_SIR(mat, beta, mu, vec_list, n):
         sum += n_SIR(mat,beta,mu,v,n)
     return sum/len(vec_list)
 
+# 将k-shell转换成字典
+def To_List(TheDist):
+    lenth = 0
+    first_dict = {}
+    last_dict = {}
+    for k, v in TheDist.items():
+        lenth += len(v)
+    for k, v in TheDist.items():
+        for i in v:
+            first_dict[i] = k
+    for i in range(lenth):
+        for k,v in first_dict.items():
+            if k == i:
+                last_dict[i] = v
+    return last_dict
 
+def Correlation(dist1, dist2):
+    n1 = 0
+    n2 = 0
+    n = len(dist1)
+    for i in range(n):
+        for j in range(n):
+            if (dist1[i] < dist1[j] and dist2[i] < dist2[j]) or (dist1[i] > dist1[j] and dist2[i] > dist2[j]):
+                n1 += 1
+            elif (dist1[i] == dist1[j] and dist2[i] == dist2[j]): n1 += 1
+            elif (dist1[i] < dist1[j] and dist2[i] > dist2[j]) or (dist1[i] > dist1[j] and dist2[i] < dist2[j]):
+                n2 += 1
+    print(n1)
+    print(n2)
+    print(n)
+    t = (n1-n2)/(n*(n-1))
+    return t
 
+m = CreateDataset("bigdata/INT.txt")
 
-m = CreateDataset("bigdata/USAir97.txt")
+# sir = score_SIR(m, 0.6, 0.8, 1)
+# print(sir)
 
 
 Nb = NbCount(m)
@@ -296,8 +337,8 @@ print(degree)
 #
 # print(Find_R(v))
 
-# lR = LocalRank(Nb, degree)
-# print(lR)
+lR = LocalRank(Nb, degree)
+print(lR)
 # L_R = Out(lR)
 # print(L_R)
 # print(List_SIR(m,0.6,0.8,L_R,100))
@@ -306,8 +347,8 @@ print(degree)
 #
 #
 #
-# x = n_Hindex(Nb,degree,100)
-# print(x)
+x = n_Hindex(Nb,degree,100)
+print(x)
 # h_i = Out(x)
 # print(h_i)
 # print(List_SIR(m,0.6,0.8,h_i,100))
@@ -315,8 +356,13 @@ print(degree)
 
 #
 #
-# ks = K_shell(Nb)
-# print(ks)
+ks = K_shell(Nb)
+k_s= To_List(ks)
+print(k_s)
+
+d_l = Correlation(lR,x)
+print(d_l)
+
 # k_s = ks[len(ks)]
 # print(k_s)
 # print(List_SIR(m,0.6,0.8,k_s,100))
