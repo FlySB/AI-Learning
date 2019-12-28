@@ -53,13 +53,32 @@ def NbCount(mat):
     return Nb
 
 # 单次迭代
-def SIRSpread(mat, beta, mu, vec):
+def SIRSpread_mat(mat, beta, mu, vec):
     """S:0 I:1 R:2"""
     for i in range(vec.size):
         if vec[i] == 0:
             num = 0
             for j in range(vec.size):
                 if mat[i, j] == 1 and vec[j] == 1:
+                    num = num + 1
+            prob = 1 - (1 - beta) ** num
+            rand = random.random()
+            if rand < prob:
+                vec[i] = 1
+        elif vec[i] == 1:
+            rand = random.random()
+            if rand < mu:
+                vec[i] = 2
+    return vec
+
+# 邻接表
+def SIRSpread_Nb(Nbcount, beta, mu, vec):
+    """S:0 I:1 R:2"""
+    for i in range(vec.size):
+        if vec[i] == 0:
+            num = 0
+            for v in Nbcount[i]:
+                if vec[v] == 1:
                     num = num + 1
             prob = 1 - (1 - beta) ** num
             rand = random.random()
@@ -87,24 +106,42 @@ def Sum_R(vec):
     return sumR
 
 # n次迭代求平均
-def n_SIR(mat, beta, mu, v, n):
+def n_SIR_mat(mat, beta, mu, v, n):
     sum = 0
     for i in range(n):
         vec = np.zeros((1, mat.shape[0]))
         vec = np.array(vec[0])
         vec[v] = 1
         while Find_I(vec):
-            SIRSpread(mat, beta, mu, vec)
+            SIRSpread_mat(mat, beta, mu, vec)
         sum += Sum_R(vec) #/len(vec)
     return sum/n
 
-def score_SIR(mat, beta, mu, n):
+def score_SIR_mat(mat, beta, mu, n):
     lenth = mat.shape[0]
     score = {}
     for i in range(lenth):
-        score[i] = n_SIR(mat, beta, mu, i, n)
+        score[i] = n_SIR_mat(mat, beta, mu, i, n)
     return score
 
+# n次迭代求平均
+def n_SIR_Nb(Nb, beta, mu, v, n):
+    sum = 0
+    for i in range(n):
+        vec = np.zeros((1, len(Nb)))
+        vec = np.array(vec[0])
+        vec[v] = 1
+        while Find_I(vec):
+            SIRSpread_Nb(Nb, beta, mu, vec)
+        sum += Sum_R(vec) #/len(vec)
+    return sum/n
+
+def score_SIR_Nb(Nb, beta, mu, n):
+    lenth = len(Nb)
+    score = {}
+    for i in range(lenth):
+        score[i] = n_SIR_Nb(Nb, beta, mu, i, n)
+    return score
 
 def DegreeCount(mat, i):
     """mat: 邻接矩阵"""
@@ -114,12 +151,18 @@ def DegreeCount(mat, i):
             num = num + 1
     return num
 
-def DegreeRank(mat):
+def DegreeRank_mat(mat):
     """mat: 邻接矩阵"""
     degree = {}
     for i in range(len(mat)):
         num = DegreeCount(mat,i)
         degree[i] =num
+    return degree
+
+def DegreeRank_Nb(Nb):
+    degree = {}
+    for k, v in Nb.items():
+        degree[k] = len(v)
     return degree
 
 
@@ -272,7 +315,7 @@ def Out(TheDist):
 def List_SIR(mat, beta, mu, vec_list, n):
     sum = 0
     for v in vec_list:
-        sum += n_SIR(mat,beta,mu,v,n)
+        sum += n_SIR_mat(mat,beta,mu,v,n)
     return sum/len(vec_list)
 
 # 将k-shell转换成字典
@@ -302,30 +345,170 @@ def Correlation(dist1, dist2):
             elif (dist1[i] == dist1[j] and dist2[i] == dist2[j]): n1 += 1
             elif (dist1[i] < dist1[j] and dist2[i] > dist2[j]) or (dist1[i] > dist1[j] and dist2[i] < dist2[j]):
                 n2 += 1
-    print(n1)
-    print(n2)
-    print(n)
+    # print(n1)
+    # print(n2)
+    # print(n)
     t = (n1-n2)/(n*(n-1))
     return t
 
-m = CreateDataset("bigdata/INT.txt")
 
+
+
+def NbCount_3(Nbcount):
+    Nb = {}
+    for k, v in Nbcount.items():
+        list_3 = {}
+        list_3[1] = v
+        list_3[2] = []
+        list_3[3] = []
+        for i in v:
+            for j in Nbcount[i]:
+                if j != k and j not in list_3[1] and j not in list_3[2]: list_3[2].append(j)
+        for i in list_3[2]:
+            for j in Nbcount[i]:
+                if j != k and j not in list_3[1] and j not in list_3[2] and j not in list_3[3]: list_3[3].append(j)
+        Nb[k] = list_3
+    return Nb
+
+def score_Nb_3(Nb_3, Nb ,beta):
+    score = {}
+    for k, v in Nb_3.items():
+        score_1 = {}
+        for i in v[1]:
+            score_1[i] = beta
+
+        for i in v[2]:
+            n = 1
+            for j in Nb[i]:
+                if j in v[1]: n = n*(1 - score_1[j]*beta)
+            score_1[i] = 1 - n
+
+        for i in v[3]:
+            n = 1
+            for j in Nb[i]:
+                if j in v[2]: n = n*(1 - score_1[j]*beta)
+            score_1[i] = 1 - n
+        sum = 0
+        for m, n in score_1.items():
+            sum += n
+        score[k] = sum
+    return score
+
+
+def All_data(data, beta):
+    Score = {}
+    for name in data:
+        Score_list = {}
+        path = "bigdata/" + name + ".txt"
+        mat = CreateDataset(path)
+        Nb = NbCount(mat)
+        print(Nb)
+        Nb_3 = NbCount_3(Nb)
+        sir = score_Nb_3(Nb_3, Nb, beta)
+        print(sir)
+        degree = DegreeRank_Nb(Nb)
+        print(degree)
+        Score_list["DegreeRank"] = Correlation(sir, degree)
+        L_R = LocalRank(Nb, degree)
+        print(L_R)
+        Score_list["LocalRank"] = Correlation(sir, L_R)
+        H_I = n_Hindex(Nb, degree, 100)
+        print(H_I)
+        Score_list["H-index"] = Correlation(sir, H_I)
+        ks = K_shell(Nb)
+        k_s = To_List(ks)
+        print(k_s)
+        Score_list["K-shell"] = Correlation(sir, k_s)
+        print(Score_list)
+        Score[name] = Score_list
+
+    return Score
+
+def Change(score):
+    s = {}
+    txt= []
+    a_s = []
+    for k in score:
+        txt.append(k)
+    for k in score[txt[0]]:
+        a_s.append(k)
+    for i in range(len(score)):
+        s[txt[i]] = []
+        for k,v in score[txt[i]].items():
+            s[txt[i]].append(v)
+    return txt, a_s, s
+
+import matplotlib.pyplot as plt
+from pylab import *         #支持中文
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+def pante(S):
+    data, a_s ,score = Change(S)
+    marker = ['o','*','x','v','D','.','1','s']
+    color = ['b','g','r','m','y','k','c']
+    # pl.xlim(-1, 11) # 限定横轴的范围
+    # pl.ylim(-1, 110) # 限定纵轴的范围
+    # plt.plot(x, y, marker='o', color='r', label=u'y=x^2曲线图')
+    # plt.plot(x, y1, marker='*', color='b', label=u'y=x^3曲线图')
+    for i in range(len(data)):
+        plt.plot(a_s, score[data[i]], marker=marker[i], color=color[i], label=str(data[i]))
+    plt.legend()  # 让图例生效
+    plt.xlabel(u"算法")  # X轴标签
+    plt.ylabel(u"相关系数")  # Y轴标签
+    plt.title(u"不同算法与概念模型对比")  # 标题
+
+    plt.show()
+
+txt = ["Grid","INT","NS","PB","PPI","USAir97"]
+
+import time
+start = time.time()
+Score = All_data(txt, 0.6)
+print(Score)
+data, a,s = Change(Score)
+print(data)
+print(a)
+print(s)
+pante(Score)
+end = time.time()
+print(end - start)
+
+
+# m = CreateDataset("bigdata/"+txt[4]+".txt")
+# import time
+# start = time.time()
 # sir = score_SIR(m, 0.6, 0.8, 1)
 # print(sir)
+# end = time.time()
+# print(end-start)
 
-
-Nb = NbCount(m)
+# Nb = NbCount(m)
+# print(Nb)
 #
-degree = DegreeRank(m)
-print(degree)
+# Nb_3 = NbCount_3(Nb)
+# print(Nb_3)
+#
+# score = score_Nb_3(Nb_3, Nb, 0.6)
+# print(score)
+#
+# start = time.time()
+# sir_1 = score_SIR_Nb(Nb, 0.6, 0.8, 1)
+# print(sir_1)
+# end = time.time()
+# print(end - start)
+
+#
+# degree = DegreeRank(m)
+# print(degree)
+# print(Correlation(sir_1, degree))
 # dr = Out(degree)
 # print(dr)
 # print(List_SIR(m,0.6,0.8,dr,100))
 # print(n_SIR(m,0.6,0.8,12,10))
 #
 # v = np.zeros((1,len(degree)))
-# v[0][6]=1
+# v[0][8]=1
 # v = np.array(v[0])
+# SIR_Spread(Nb, 0.6,0.8,v)
 # print(v)
 # print(v[6])
 #
@@ -337,8 +520,9 @@ print(degree)
 #
 # print(Find_R(v))
 
-lR = LocalRank(Nb, degree)
-print(lR)
+# lR = LocalRank(Nb, degree)
+# print(lR)
+# print(Correlation(sir_1, lR))
 # L_R = Out(lR)
 # print(L_R)
 # print(List_SIR(m,0.6,0.8,L_R,100))
@@ -347,8 +531,9 @@ print(lR)
 #
 #
 #
-x = n_Hindex(Nb,degree,100)
-print(x)
+# x = n_Hindex(Nb,degree,100)
+# print(x)
+# print(Correlation(sir_1, x))
 # h_i = Out(x)
 # print(h_i)
 # print(List_SIR(m,0.6,0.8,h_i,100))
@@ -356,12 +541,13 @@ print(x)
 
 #
 #
-ks = K_shell(Nb)
-k_s= To_List(ks)
-print(k_s)
-
-d_l = Correlation(lR,x)
-print(d_l)
+# ks = K_shell(Nb)
+# k_s= To_List(ks)
+# print(k_s)
+# print(Correlation(sir_1, k_s))
+#
+# d_l = Correlation(lR,x)
+# print(d_l)
 
 # k_s = ks[len(ks)]
 # print(k_s)
