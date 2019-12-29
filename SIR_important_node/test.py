@@ -1,23 +1,37 @@
-import matplotlib.pyplot as plt
-from pylab import *         #支持中文
-mpl.rcParams['font.sans-serif'] = ['SimHei']
+# import numpy as np
+#
+# # Save
+# dictionary = {'hello':'world'}
+# np.save('my_file.npy', dictionary)
+#
+# # Load
+# read_dictionary = np.load('my_file.npy').item()
+# print(read_dictionary['hello']) # displays "world"
 
-names = ['w', '10', '15', '20', '25']
-x = names
-y = [0.855, 0.84, 0.835, 0.815, 0.81]
-y1=[0.86,0.85,0.853,0.849,0.83]
-#plt.plot(x, y, 'ro-')
-#plt.plot(x, y1, 'bo-')
-#pl.xlim(-1, 11) # 限定横轴的范围
-#pl.ylim(-1, 110) # 限定纵轴的范围
-plt.plot(names, y, marker='o', color='r',label=u'y=x^2曲线图')
-plt.plot(x, y1, marker='*', color='b',label=u'y=x^3曲线图')
-plt.legend() # 让图例生效
-# plt.xticks(x, names, rotation=45)
-# plt.margins(0)
-# plt.subplots_adjust(bottom=0.15)
-plt.xlabel(u"time(s)邻居") #X轴标签
-plt.ylabel("RMSE") #Y轴标签
-plt.title("A simple plot") #标题
-
-plt.show()
+import numpy as np
+import time
+import random
+# from demo import *
+# start = time.time()
+# m = CreateDataset("bigdata/USAir97.txt")
+# Nb = NbCount(m)
+# sir  = score_SIR_Nb(Nb, 0.6, 0.8, 10)
+# np.save('USAir97_sir_10.npy',sir)
+# end = time.time()
+# print(end-start)
+# read = np.load('USAir97_sir_10.npy',allow_pickle=True)
+# print(read)
+# read = np.load('USAir97_sir_50.npy',allow_pickle=True)
+# print(read)
+# read = np.load('USAir97_sir_100.npy',allow_pickle=True)
+# print(read)
+# read = np.load('USAir97_sir_200.npy',allow_pickle=True)
+# print(read)
+# read = np.load('NS_sir_1.npy',allow_pickle=True)
+# print(read)
+# read = np.load('NS_sir_200.npy',allow_pickle=True) # 3061
+# print(read)
+read = np.load('PB_sir_1.npy',allow_pickle=True)
+print(read)
+read = np.load('PB_sir_200.npy',allow_pickle=True) # 3573
+print(read)

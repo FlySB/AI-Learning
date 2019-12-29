@@ -1,5 +1,5 @@
 import numpy as np
-import random
+from random import random
 from collections import Counter
 
 # def CreateDataset(file_path):
@@ -62,11 +62,11 @@ def SIRSpread_mat(mat, beta, mu, vec):
                 if mat[i, j] == 1 and vec[j] == 1:
                     num = num + 1
             prob = 1 - (1 - beta) ** num
-            rand = random.random()
+            rand = random()
             if rand < prob:
                 vec[i] = 1
         elif vec[i] == 1:
-            rand = random.random()
+            rand = random()
             if rand < mu:
                 vec[i] = 2
     return vec
@@ -81,11 +81,11 @@ def SIRSpread_Nb(Nbcount, beta, mu, vec):
                 if vec[v] == 1:
                     num = num + 1
             prob = 1 - (1 - beta) ** num
-            rand = random.random()
+            rand = random()
             if rand < prob:
                 vec[i] = 1
         elif vec[i] == 1:
-            rand = random.random()
+            rand = random()
             if rand < mu:
                 vec[i] = 2
     return vec
@@ -218,7 +218,7 @@ def K_shell(ks):
     kshell = {}
     ks1 = []
     # k值的初始值为s=1
-    s = 1
+    s = 0
     kshell[s] = []
     while ks:
         # 根据度数值是否和s相等，将找到的节点存入ks1
@@ -395,7 +395,46 @@ def score_Nb_3(Nb_3, Nb ,beta):
     return score
 
 
-def All_data(data, beta):
+def All_data_2(data, beta,n):
+    Score = {}
+    for name in data:
+        Score_list = {}
+        path = "bigdata/" + name + ".txt"
+        mat = CreateDataset(path)
+        Nb = NbCount(mat)
+        print(Nb)
+        Nb_3 = NbCount_3(Nb)
+        sir = score_Nb_3(Nb_3, Nb, beta)
+        print(sir)
+        s1 = To_n_cell(sir, n)
+        print(s1)
+        degree = DegreeRank_Nb(Nb)
+        print(degree)
+        d1 = To_n_cell(degree, n)
+        print(d1)
+        Score_list["DegreeRank"] = Correlation(s1, d1)
+        L_R = LocalRank(Nb, degree)
+        print(L_R)
+        l1 = To_n_cell(L_R, n)
+        print(l1)
+        Score_list["LocalRank"] = Correlation(s1, l1)
+        H_I = n_Hindex(Nb, degree, 100)
+        print(H_I)
+        h1 = To_n_cell(H_I, n)
+        print(h1)
+        Score_list["H-index"] = Correlation(s1, h1)
+        ks = K_shell(Nb)
+        k_s = To_List(ks)
+        print(k_s)
+        k1 = To_n_cell(k_s, n)
+        print(k1)
+        Score_list["K-shell"] = Correlation(s1, k1)
+        print(Score_list)
+        Score[name] = Score_list
+
+    return Score
+
+def All_data_1(data, beta):
     Score = {}
     for name in data:
         Score_list = {}
@@ -438,6 +477,31 @@ def Change(score):
             s[txt[i]].append(v)
     return txt, a_s, s
 
+def To_n_cell(score, n):
+    new_score = {}
+    min = float('inf')
+    max = 0
+    for k,v in score.items():
+        if v > max: max = v
+        if v < min: min = v
+    x = max - min
+    step = x/n
+    print(max)
+    print(min)
+    print(step)
+    for k,v in score.items():
+        if v <= min + (step/2):
+            new_score[k] = 1
+            continue
+        if v > max - (step/2):
+            new_score[k] = n+1
+            continue
+        for i in range(1, n):
+            if v > min + (i-0.5)*step and v <= min + (i+0.5)*step:
+                new_score[k] = i+1
+                break
+    return new_score
+
 import matplotlib.pyplot as plt
 from pylab import *         #支持中文
 mpl.rcParams['font.sans-serif'] = ['SimHei']
@@ -458,19 +522,36 @@ def pante(S):
 
     plt.show()
 
-txt = ["Grid","INT","NS","PB","PPI","USAir97"]
+txt1 = ["Grid","INT","NS","PB","PPI","USAir97"]
 
-import time
+txt = ["Grid"]
+
 start = time.time()
-Score = All_data(txt, 0.6)
-print(Score)
-data, a,s = Change(Score)
-print(data)
-print(a)
-print(s)
-pante(Score)
+m = CreateDataset("bigdata/PB.txt")
+Nb = NbCount(m)
+print(Nb)
+sir  = score_SIR_Nb(Nb, 0.6, 0.8, 200)
+np.save('PB_sir_200.npy',sir)
 end = time.time()
-print(end - start)
+print(end-start)
+
+# import time
+# start = time.time()
+# Score = All_data_1(txt1, 0.6)
+# print(Score)
+# data, a,s = Change(Score)
+# print(data)
+# print(a)
+# print(s)
+# end = time.time()
+# print(end - start)
+# pante(Score)
+
+# m = CreateDataset("bigdata/text.txt")
+# degree = DegreeRank_mat(m)
+# print(degree)
+# s = To_n_cell(degree,4)
+# print(s)
 
 
 # m = CreateDataset("bigdata/"+txt[4]+".txt")
