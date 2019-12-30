@@ -31,7 +31,9 @@ import random
 # print(read)
 # read = np.load('NS_sir_200.npy',allow_pickle=True) # 3061
 # print(read)
-read = np.load('PB_sir_1.npy',allow_pickle=True)
-print(read)
-read = np.load('PB_sir_200.npy',allow_pickle=True) # 3573
+# read = np.load('PB_sir_1.npy',allow_pickle=True)
+# print(read)
+# read = np.load('PB_sir_200.npy',allow_pickle=True) # 3573
+# print(read)
+read = np.load('PPI_sir_1.npy',allow_pickle=True)
 print(read)

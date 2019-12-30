@@ -527,11 +527,11 @@ txt1 = ["Grid","INT","NS","PB","PPI","USAir97"]
 txt = ["Grid"]
 
 start = time.time()
-m = CreateDataset("bigdata/PB.txt")
+m = CreateDataset("bigdata/PPI.txt")
 Nb = NbCount(m)
 print(Nb)
-sir  = score_SIR_Nb(Nb, 0.6, 0.8, 200)
-np.save('PB_sir_200.npy',sir)
+sir  = score_SIR_Nb(Nb, 0.6, 0.8, 1)
+np.save('PPI_sir_1.npy',sir)
 end = time.time()
 print(end-start)
 
