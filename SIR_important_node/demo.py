@@ -1,6 +1,9 @@
 import numpy as np
 from random import random
 from collections import Counter
+import matplotlib.pyplot as plt
+from pylab import *         #支持中文
+mpl.rcParams['font.sans-serif'] = ['SimHei']
 
 # def CreateDataset(file_path):
 #     Zreo = 0
@@ -166,26 +169,6 @@ def DegreeRank_Nb(Nb):
     return degree
 
 
-#
-# def QCount(DegreeCount, NbCount):
-#     Q = {}
-#     for i in range(len(NbCount)):
-#         num = 0
-#         for nb in NbCount[i]:
-#             num = num + DegreeCount[nb]
-#         Q[i] = num
-#     return Q
-#
-# def CLCount(NbCount,Qcount):
-#     CL = {}
-#     for i in range(len(NbCount)):
-#         num = 0
-#         for nb in NbCount[i]:
-#             num = num + Qcount[nb]
-#         CL[i] = num
-#     return CL
-
-
 
 
 def LocalRank(NbCount,DegreeCount):
@@ -217,7 +200,7 @@ def K_shell(ks):
     """
     kshell = {}
     ks1 = []
-    # k值的初始值为s=1
+    # k值的初始值为s=0 (有的图没有0号点)
     s = 0
     kshell[s] = []
     while ks:
@@ -300,6 +283,7 @@ def n_Hindex(Nbcount,degree, n):
 
     return h
 
+# 求字典最大v的k集
 def Out(TheDist):
     TheMax = 0
     for k,v in TheDist.items():
@@ -309,9 +293,7 @@ def Out(TheDist):
     for k,v in TheDist.items():
         if v == TheMax: List.append(k)
     return List
-
-
-
+# 节点组合传播
 def List_SIR(mat, beta, mu, vec_list, n):
     sum = 0
     for v in vec_list:
@@ -334,6 +316,7 @@ def To_List(TheDist):
                 last_dict[i] = v
     return last_dict
 
+# 相关系数计算
 def Correlation(dist1, dist2):
     n1 = 0
     n2 = 0
@@ -353,7 +336,7 @@ def Correlation(dist1, dist2):
 
 
 
-
+# 传播动力学
 def NbCount_3(Nbcount):
     Nb = {}
     for k, v in Nbcount.items():
@@ -369,7 +352,6 @@ def NbCount_3(Nbcount):
                 if j != k and j not in list_3[1] and j not in list_3[2] and j not in list_3[3]: list_3[3].append(j)
         Nb[k] = list_3
     return Nb
-
 def score_Nb_3(Nb_3, Nb ,beta):
     score = {}
     for k, v in Nb_3.items():
@@ -394,74 +376,75 @@ def score_Nb_3(Nb_3, Nb ,beta):
         score[k] = sum
     return score
 
+# # 分层
+# def All_data_2(data, beta,n):
+#     Score = {}
+#     for name in data:
+#         Score_list = {}
+#         path = "bigdata/" + name + ".txt"
+#         mat = CreateDataset(path)
+#         Nb = NbCount(mat)
+#         print(Nb)
+#         Nb_3 = NbCount_3(Nb)
+#         sir = score_Nb_3(Nb_3, Nb, beta)
+#         print(sir)
+#         s1 = To_n_cell(sir, n)
+#         print(s1)
+#         degree = DegreeRank_Nb(Nb)
+#         print(degree)
+#         d1 = To_n_cell(degree, n)
+#         print(d1)
+#         Score_list["DegreeRank"] = Correlation(s1, d1)
+#         L_R = LocalRank(Nb, degree)
+#         print(L_R)
+#         l1 = To_n_cell(L_R, n)
+#         print(l1)
+#         Score_list["LocalRank"] = Correlation(s1, l1)
+#         H_I = n_Hindex(Nb, degree, 100)
+#         print(H_I)
+#         h1 = To_n_cell(H_I, n)
+#         print(h1)
+#         Score_list["H-index"] = Correlation(s1, h1)
+#         ks = K_shell(Nb)
+#         k_s = To_List(ks)
+#         print(k_s)
+#         k1 = To_n_cell(k_s, n)
+#         print(k1)
+#         Score_list["K-shell"] = Correlation(s1, k1)
+#         print(Score_list)
+#         Score[name] = Score_list
+#
+#     return Score
 
-def All_data_2(data, beta,n):
-    Score = {}
-    for name in data:
-        Score_list = {}
-        path = "bigdata/" + name + ".txt"
-        mat = CreateDataset(path)
-        Nb = NbCount(mat)
-        print(Nb)
-        Nb_3 = NbCount_3(Nb)
-        sir = score_Nb_3(Nb_3, Nb, beta)
-        print(sir)
-        s1 = To_n_cell(sir, n)
-        print(s1)
-        degree = DegreeRank_Nb(Nb)
-        print(degree)
-        d1 = To_n_cell(degree, n)
-        print(d1)
-        Score_list["DegreeRank"] = Correlation(s1, d1)
-        L_R = LocalRank(Nb, degree)
-        print(L_R)
-        l1 = To_n_cell(L_R, n)
-        print(l1)
-        Score_list["LocalRank"] = Correlation(s1, l1)
-        H_I = n_Hindex(Nb, degree, 100)
-        print(H_I)
-        h1 = To_n_cell(H_I, n)
-        print(h1)
-        Score_list["H-index"] = Correlation(s1, h1)
-        ks = K_shell(Nb)
-        k_s = To_List(ks)
-        print(k_s)
-        k1 = To_n_cell(k_s, n)
-        print(k1)
-        Score_list["K-shell"] = Correlation(s1, k1)
-        print(Score_list)
-        Score[name] = Score_list
-
-    return Score
-
-def All_data_1(data, beta):
-    Score = {}
-    for name in data:
-        Score_list = {}
-        path = "bigdata/" + name + ".txt"
-        mat = CreateDataset(path)
-        Nb = NbCount(mat)
-        print(Nb)
-        Nb_3 = NbCount_3(Nb)
-        sir = score_Nb_3(Nb_3, Nb, beta)
-        print(sir)
-        degree = DegreeRank_Nb(Nb)
-        print(degree)
-        Score_list["DegreeRank"] = Correlation(sir, degree)
-        L_R = LocalRank(Nb, degree)
-        print(L_R)
-        Score_list["LocalRank"] = Correlation(sir, L_R)
-        H_I = n_Hindex(Nb, degree, 100)
-        print(H_I)
-        Score_list["H-index"] = Correlation(sir, H_I)
-        ks = K_shell(Nb)
-        k_s = To_List(ks)
-        print(k_s)
-        Score_list["K-shell"] = Correlation(sir, k_s)
-        print(Score_list)
-        Score[name] = Score_list
-
-    return Score
+# # 不分层
+# def All_data_1(data, beta):
+#     Score = {}
+#     for name in data:
+#         Score_list = {}
+#         path = "bigdata/" + name + ".txt"
+#         mat = CreateDataset(path)
+#         Nb = NbCount(mat)
+#         print(Nb)
+#         Nb_3 = NbCount_3(Nb)
+#         sir = score_Nb_3(Nb_3, Nb, beta)
+#         print(sir)
+#         degree = DegreeRank_Nb(Nb)
+#         print(degree)
+#         Score_list["DegreeRank"] = Correlation(sir, degree)
+#         L_R = LocalRank(Nb, degree)
+#         print(L_R)
+#         Score_list["LocalRank"] = Correlation(sir, L_R)
+#         H_I = n_Hindex(Nb, degree, 100)
+#         print(H_I)
+#         Score_list["H-index"] = Correlation(sir, H_I)
+#         ks = K_shell(Nb)
+#         k_s = To_List(ks)
+#         print(k_s)
+#         Score_list["K-shell"] = Correlation(sir, k_s)
+#         print(Score_list)
+#         Score[name] = Score_list
+#
+#     return Score
 
 def Change(score):
     s = {}
@@ -477,6 +460,7 @@ def Change(score):
             s[txt[i]].append(v)
     return txt, a_s, s
 
+# 分数分层
 def To_n_cell(score, n):
     new_score = {}
     min = float('inf')
@@ -502,9 +486,7 @@ def To_n_cell(score, n):
                 break
     return new_score
 
-import matplotlib.pyplot as plt
-from pylab import *         #支持中文
-mpl.rcParams['font.sans-serif'] = ['SimHei']
+# 画图
 def pante(S):
     data, a_s ,score = Change(S)
     marker = ['o','*','x','v','D','.','1','s']
@@ -522,22 +504,169 @@ def pante(S):
 
     plt.show()
 
+# 存储所有数据集的计算结果
+# def All(data):
+#     for name in data:
+#         path = "bigdata/" + name + ".txt"
+#         mat = CreateDataset(path)
+#         Nb = NbCount(mat)
+#         print(Nb)
+#         degree = DegreeRank_Nb(Nb)
+#         np.save(name+'_degree.npy', degree)
+#         print(degree)
+#         L_R = LocalRank(Nb, degree)
+#         print(L_R)
+#         np.save(name + '_LocalRank.npy', L_R)
+#         H_I = n_Hindex(Nb, degree, 100)
+#         print(H_I)
+#         np.save(name + '_Hindex100.npy', H_I)
+#         ks = K_shell(Nb)
+#         k_s = To_List(ks)
+#         print(k_s)
+#         np.save(name + '_Kshell.npy', k_s)
+
+def All_savedata_1(data):
+    Score = {}
+    for name in data:
+        Score_list = {}
+
+        sir = np.load(name + '_NB_3.npy', allow_pickle=True)
+        # sir = np.load(name+'_sir_200.npy',allow_pickle=True)
+        print(sir)
+        sir = sir.item()
+
+        degree = np.load(name+'_degree.npy',allow_pickle=True)
+        degree = degree.item()
+        print(degree)
+        Score_list["DegreeRank"] = Correlation(sir, degree)
+
+        L_R = np.load(name+'_LocalRank.npy',allow_pickle=True)
+        L_R = L_R.item()
+        print(L_R)
+        Score_list["LocalRank"] = Correlation(sir, L_R)
+
+        H_I = np.load(name+'_Hindex_1.npy',allow_pickle=True)
+        H_I = H_I.item()
+        print(H_I)
+        Score_list["H-index"] = Correlation(sir, H_I)
+
+        Coreness = np.load(name + '_Hindex_100.npy', allow_pickle=True)
+        Coreness = Coreness.item()
+        print(Coreness)
+        Score_list["Coreness"] = Correlation(sir, Coreness)
+
+        k_s = np.load(name+'_Kshell.npy',allow_pickle=True)
+        k_s = k_s.item()
+        print(k_s)
+        Score_list["K-shell"] = Correlation(sir, k_s)
+
+        print(Score_list)
+        Score[name] = Score_list
+    return Score
+
+def All_savedata_2(data, n):
+    Score = {}
+    for name in data:
+        Score_list = {}
+
+        # sir = np.load(name + '_NB_3.npy', allow_pickle=True)
+        sir = np.load(name + '_sir_200.npy', allow_pickle=True)
+        print(sir)
+        sir = sir.item()
+        s1 = To_n_cell(sir, n)
+        print(s1)
+
+        degree = np.load(name + '_degree.npy', allow_pickle=True)
+        degree = degree.item()
+        print(degree)
+        d1 = To_n_cell(degree, n)
+        print(d1)
+        Score_list["DegreeRank"] = Correlation(s1, d1)
+
+        L_R = np.load(name + '_LocalRank.npy', allow_pickle=True)
+        L_R = L_R.item()
+        print(L_R)
+        l1 = To_n_cell(L_R, n)
+        print(l1)
+        Score_list["LocalRank"] = Correlation(s1, l1)
+
+        H_I = np.load(name + '_Hindex_1.npy', allow_pickle=True)
+        H_I = H_I.item()
+        print(H_I)
+        H1 = To_n_cell(H_I, n)
+        Score_list["H-index"] = Correlation(s1, H1)
+
+        Coreness = np.load(name + '_Hindex_100.npy', allow_pickle=True)
+        Coreness = Coreness.item()
+        print(Coreness)
+        C1 = To_n_cell(Coreness, n)
+        Score_list["Coreness"] = Correlation(s1, C1)
+
+        k_s = np.load(name + '_Kshell.npy', allow_pickle=True)
+        k_s = k_s.item()
+        print(k_s)
+        k1 = To_n_cell(k_s, n)
+        print(k1)
+        Score_list["K-shell"] = Correlation(s1, k1)
+
+        print(Score_list)
+        Score[name] = Score_list
+
+    return Score
+
+
+
 txt1 = ["Grid","INT","NS","PB","PPI","USAir97"]
+txt2 = ["NS","PB","PPI","USAir97"]
 
-txt = ["Grid"]
-
+import time
 start = time.time()
-m = CreateDataset("bigdata/PPI.txt")
-Nb = NbCount(m)
-print(Nb)
-sir  = score_SIR_Nb(Nb, 0.6, 0.8, 1)
-np.save('PPI_sir_1.npy',sir)
+Score = All_savedata_2(txt2,10)
+print(Score)
+data, a, s = Change(Score)
+print(data)
+print(a)
+print(s)
 end = time.time()
-print(end-start)
+print(end - start)
+pante(Score)
+
+# def All_test(data):
+#     n = [5, 10, 20, 50, 100]
+#     for name in data:
+#         path = "bigdata/" + name + ".txt"
+#         mat = CreateDataset(path)
+#         Nb = NbCount(mat)
+#         degree = DegreeRank_Nb(Nb)
+#         for i in n:
+#             H_I = n_Hindex(Nb, degree, i)
+#             print(H_I)
+#             np.save(name + '_Hindex_'+str(i)+'.npy', H_I)
+#
+# def All_test_out(data):
+#     n = [5, 10, 20, 50, 100]
+#     for name in data:
+#         print("\n")
+#         for i in n:
+#             read = np.load(name + '_Hindex_'+str(i)+'.npy', allow_pickle=True)
+#             print(name + '_Hindex_'+str(i)+'.npy')
+#             H_I = read.item()
+#             print(H_I)
+
+# All_test_out(txt1)
+
+# start = time.time()
+# m = CreateDataset("bigdata/PPI.txt")
+# Nb = NbCount(m)
+# print(Nb)
+# sir  = score_SIR_Nb(Nb, 0.6, 0.8, 1)
+# np.save('PPI_sir_1.npy',sir)
+# end = time.time()
+# print(end-start)
 
 # import time
 # start = time.time()
-# Score = All_data_1(txt1, 0.6)
+# Score = All_savedata_2(txt, 5)
 # print(Score)
 # data, a,s = Change(Score)
 # print(data)
