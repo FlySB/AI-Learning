@@ -318,6 +318,11 @@ def To_List(TheDist):
 
 # 相关系数计算
 def Correlation(dist1, dist2):
+    """
+    :param dist1: 分数序列1
+    :param dist2: 分数序列2
+    :return: 相关系数
+    """
     n1 = 0
     n2 = 0
     n = len(dist1)
@@ -328,16 +333,17 @@ def Correlation(dist1, dist2):
             elif (dist1[i] == dist1[j] and dist2[i] == dist2[j]): n1 += 1
             elif (dist1[i] < dist1[j] and dist2[i] > dist2[j]) or (dist1[i] > dist1[j] and dist2[i] < dist2[j]):
                 n2 += 1
-    # print(n1)
-    # print(n2)
-    # print(n)
     t = (n1-n2)/(n*(n-1))
     return t
 
 
 
-# 传播动力学
+# 寻找3阶邻居
 def NbCount_3(Nbcount):
+    """
+    :param Nbcount: 邻接表
+    :return: 3阶邻居集合
+    """
     Nb = {}
     for k, v in Nbcount.items():
         list_3 = {}
@@ -352,7 +358,15 @@ def NbCount_3(Nbcount):
                 if j != k and j not in list_3[1] and j not in list_3[2] and j not in list_3[3]: list_3[3].append(j)
         Nb[k] = list_3
     return Nb
+
+# 计算分数
 def score_Nb_3(Nb_3, Nb ,beta):
+    """
+    :param Nb_3: 3阶邻居集合
+    :param Nb: 邻接表
+    :param beta: 感染概率
+    :return: 传播动力学概率模型得分
+    """
     score = {}
     for k, v in Nb_3.items():
         score_1 = {}
@@ -462,6 +476,11 @@ def Change(score):
 
 # 分数分层
 def To_n_cell(score, n):
+    """
+    :param score: 分数序列
+    :param n: n+1 = 分等级层数
+    :return: 分级序列
+    """
     new_score = {}
     min = float('inf')
     max = 0
